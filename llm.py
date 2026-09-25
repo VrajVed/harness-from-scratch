@@ -26,7 +26,7 @@ def load_env(path: str = ".env") -> None:
 
 load_env()
 
-BASE_URL = os.environ.get("GROQ_BASE_URL", "https://api.groq.ai/openai/v1")
+BASE_URL = os.environ.get("GROQ_BASE_URL", "https://api.groq.com/openai/v1")
 
 API_KEY = os.environ["GROQ_API_KEY"]
 
@@ -57,7 +57,8 @@ def chat(messages: list[dict], tools: list[dict] | None = None) -> dict:
         data =json.dumps(payload).encode("utf-8"),
         headers = {
             "Content-Type": "application/json",
-            "Authorization": f"Bearer {API_KEY}"
+            "Authorization": f"Bearer {API_KEY}",
+            "User-Agent": "groq-python/0.1.0"
         },
     )
 
@@ -72,4 +73,3 @@ def chat(messages: list[dict], tools: list[dict] | None = None) -> dict:
 
     return body["choices"][0]["message"]
 
- 
