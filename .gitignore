@@ -1,3 +1,9 @@
 .env
 __pycache__/
-.venv
+.venv/
+*.pyc
+big.txt
+DONE
+size.txt
+trajectory.jsonl
+*.jsonl

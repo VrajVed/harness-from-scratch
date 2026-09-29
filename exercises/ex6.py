@@ -2,7 +2,6 @@ import json
 import random
 import time
 import urllib.request
-from exercises.ex5 import STATE, log_step
 from llm import BASE_URL, API_KEY, MODEL, LLMError, chat
 from exercises.ex3 import TOOLS, TOOL_SCHEMAS, execute_tool
 
@@ -42,7 +41,7 @@ def chat_stream(messages: list[dict]) -> str:
 
     payload = {
         "model": MODEL,
-        "message": messages,
+        "messages": messages,
         "temperature": 0.0,
         "stream": True,
     }
@@ -60,7 +59,7 @@ def chat_stream(messages: list[dict]) -> str:
     
     with urllib.request.urlopen(request, timeout=60) as response:
         for raw_line in response:
-            line = raw_line.deconde("utf-8").strip()
+            line = raw_line.decode("utf-8").strip()
             if not line.startswith("data:"):
                 continue
 
