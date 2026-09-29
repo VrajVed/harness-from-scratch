@@ -79,57 +79,27 @@ def chat_stream(messages: list[dict]) -> str:
         return full_text
 
 def run(task: str) -> None:
-
-    messages = [{
-        "role": "user", "content" : task
-    }]
+    messages = [{"role": "user", "content": task}]
 
     for step in range(MAX_STEPS):
         message = chat_with_retry(messages, tools=TOOL_SCHEMAS)
         messages.append(message)
 
-        record = {
-            "step": step,
-            "assistant": message.get("content"),
-            "tool_calls": [],
-            "results": []
-        }
+        tool_calls = message.get("tool_calls") or []
+        if not tool_calls:
+            chat_stream(messages)   # stream the final answer live
+            return
 
-        for call in message.get("tool_calls") or []:
+        for call in tool_calls:
             name = call["function"]["name"]
             result = execute_tool(name, call["function"]["arguments"])
-
             messages.append({
                 "role": "tool",
                 "tool_call_id": call["id"],
-                "content": result
+                "content": result,
             })
 
-            record["tool_calls"].append(name)
-            record["results"].append(result[:200])
-
-            record["finished"] = STATE["done"]
-            log_step(record)
-
-            if STATE["done"]:
-
-                print(f"[step {step}] finished: {STATE['answer']}")
-
-                return
-
-            if not message.get("tool_calls"):
-
-                print(f"[step {step}] no tool calls and no finish")
-                return chat_stream(messages)
-
-        print(f"hit Max steps={MAX_STEPS}")
-
-
-    # TODO: rebuild your ex5 loop, but:
-    #   - call chat_with_retry(...) inside the loop
-    #   - when the model returns NO tool_calls, do one final
-    #     chat_stream(messages) to deliver the answer live
-
+    print(f"hit MAX_STEPS={MAX_STEPS}")
 
     
 
