@@ -52,6 +52,20 @@ PYTHONPATH=. python3 exercises/ex2.py
 
 **Do them in order.** Each one reuses the previous exercise's code. And when something breaks — it will — read the traceback before reaching for a fix. Every bug in these exercises is a real failure mode production harnesses have.
 
+### What a good run looks like
+
+Exercise 2, start to finish:
+
+```bash
+$ PYTHONPATH=. python3 exercises/ex2.py
+[step 0] model requested: get_time({})
+[step 1] final answer: It's currently 2026-09-26 12:02:30.193066 (local time).
+```
+
+Step 0: the model emitted a `tool_calls` request instead of text. Your code executed `get_time()` and appended the result. Step 1: the model read the result and answered. That request → execute → result → answer cycle is the entire foundation — every agent framework is this loop plus bookkeeping.
+
+If you only see step 0 and silence, your loop is missing the "no tool calls → print and return" branch. Check ex2 against ex3 — the difference is one `if`.
+
 ## Repo layout
 
 ```
